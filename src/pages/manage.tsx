@@ -4,19 +4,18 @@ import { Inter } from "next/font/google";
 import React from 'react';
 import { FormControl, InputLabel, MenuItem, Select, Typography, SelectChangeEvent } from "@mui/material";
 
-import fs from 'fs';
-import path from 'path';
+import { getEnvFiles } from '../utils/helpers/getEnvFiles';
 
 const inter = Inter({ subsets: ["latin"] });
 
 // Define a type for the props
 interface ManagePageProps {
-  envFiles: string[];
+  envFiles: string[] | null;
 }
 
 const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
   // States
-  const defaultEnvFile = envFiles.length > 0 ? (envFiles.includes('.env') ? '.env' : envFiles[0]) : '';
+  const defaultEnvFile = envFiles ? (envFiles.includes('.env') ? '.env' : envFiles[0]) : '';
   const [selectedEnvFile, setSelectedEnvFile] = React.useState<string>(defaultEnvFile);
 
   // Handlers
@@ -63,17 +62,23 @@ const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
             Select the .env file reference:
           </Typography>
           {/* <InputLabel id="env-file-label">Select the .env file reference:</InputLabel> */}
-          <Select
-            labelId="env-file-label"
-            id="env-file"
-            label="Select the .env file reference:"
-            value={selectedEnvFile || ''}
-            onChange={handleEnvFileChange}
-          >
-            {envFiles && envFiles.map((envFile) => (
-              <MenuItem key={envFile} value={envFile}>{envFile}</MenuItem>
-            ))}
-          </Select>
+          {envFiles ? (
+            <Select
+              labelId="env-file-label"
+              id="env-file"
+              label="Select the .env file reference:"
+              value={selectedEnvFile || ''}
+              onChange={handleEnvFileChange}
+            >
+              {envFiles && envFiles.map((envFile) => (
+                <MenuItem key={envFile} value={envFile}>{envFile}</MenuItem>
+              ))}
+            </Select>
+            ) : (
+              <Typography variant="body1" component="p" className="text-red-500 font-bold">
+                No .env files found in your project. Check the root directory, create an .env file and try again.
+              </Typography>
+            )}
           {/* </div> */}
         </FormControl>
       </div>
@@ -87,14 +92,18 @@ const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
 
 export const getServerSideProps: GetServerSideProps<ManagePageProps> = async () => {
 // export const getServerSideProps: GetServerSideProps = async () => {
-  // const directory = path.join(process.cwd(), '.envs');
-  const directory = path.join(process.cwd());
-  // console.log('directory:', directory);
-  const filenames = fs.readdirSync(directory);
-  // console.log('filenames:', filenames);
-  // const envFiles = fs.readdirSync(path.join(process.cwd(), '.envs'));
-  const envFiles = filenames.filter((filename) => filename.startsWith('.env'));
-  //console.log('envFiles:', envFiles);
+  // // const directory = path.join(process.cwd(), '.envs');
+  // const directory = path.join(process.cwd());
+  // // console.log('directory:', directory);
+  // const filenames = fs.readdirSync(directory);
+  // // console.log('filenames:', filenames);
+  // // const envFiles = fs.readdirSync(path.join(process.cwd(), '.envs'));
+  // const envFiles = filenames.filter((filename) => filename.startsWith('.env'));
+  // //console.log('envFiles:', envFiles);
+
+  const envFiles = getEnvFiles();
+  // const envFiles = null;
+
   return {
     props: {
       envFiles,
