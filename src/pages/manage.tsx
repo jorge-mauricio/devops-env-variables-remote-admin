@@ -1,4 +1,5 @@
 'use-strict';
+
 import Image from "next/image";
 import { GetServerSideProps } from 'next';
 import { Inter } from "next/font/google";
