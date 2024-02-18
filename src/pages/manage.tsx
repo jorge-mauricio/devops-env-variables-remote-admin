@@ -1,3 +1,4 @@
+'use-strict';
 import Image from "next/image";
 import { GetServerSideProps } from 'next';
 import { Inter } from "next/font/google";
@@ -52,21 +53,14 @@ const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
       </div>
 
       <div className="relative flex place-items-center w-full">
-        {/* 
-        label: Select the .env file reference.
-        input field:  dropdown with 3 dummy options 
-        */}
         <FormControl fullWidth>
-          {/* <div className="w-full"> */}
           <Typography id="env-file-label" component="label" htmlFor="env-file" className="mb-2">
             Select the .env file reference:
           </Typography>
-          {/* <InputLabel id="env-file-label">Select the .env file reference:</InputLabel> */}
           {envFiles ? (
             <Select
               labelId="env-file-label"
               id="env-file"
-              label="Select the .env file reference:"
               value={selectedEnvFile || ''}
               onChange={handleEnvFileChange}
             >
@@ -79,7 +73,6 @@ const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
                 No .env files found in your project. Check the root directory, create an .env file and try again.
               </Typography>
             )}
-          {/* </div> */}
         </FormControl>
       </div>
 
@@ -90,19 +83,14 @@ const ManagePage: React.FC<ManagePageProps> = ({ envFiles }) => {
   );
 };
 
+/**
+ * Fetches the server-side properties for the ManagePage component.
+ *
+ * @returns {Promise<GetServerSidePropsResult<ManagePageProps>>} An object that includes the `envFiles` prop.
+ */
 export const getServerSideProps: GetServerSideProps<ManagePageProps> = async () => {
-// export const getServerSideProps: GetServerSideProps = async () => {
-  // // const directory = path.join(process.cwd(), '.envs');
-  // const directory = path.join(process.cwd());
-  // // console.log('directory:', directory);
-  // const filenames = fs.readdirSync(directory);
-  // // console.log('filenames:', filenames);
-  // // const envFiles = fs.readdirSync(path.join(process.cwd(), '.envs'));
-  // const envFiles = filenames.filter((filename) => filename.startsWith('.env'));
-  // //console.log('envFiles:', envFiles);
-
+  
   const envFiles = getEnvFiles();
-  // const envFiles = null;
 
   return {
     props: {
